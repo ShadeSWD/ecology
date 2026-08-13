@@ -15,33 +15,39 @@
 
   /* href — чистый URL без .html; key — значение data-page для подсветки */
   const nav = [
-    { href: '', key: 'index', title: 'Обзор' },
-    { href: 'theory', key: 'theory', title: 'Теория', sub: [
-      ['t-air', 'Атмосфера'],
-      ['t-water', 'Гидросфера'],
-      ['t-waste', 'Отходы'],
-      ['t-marine', 'Судно как источник'],
+    { h: '', k: 'index', t: 'Обзор' },
+    { t: 'Теория', h: 'theory', drop: [
+      { h: 'theory', k: 'theory', t: 'Оглавление курса' },
+      { h: 't-air', k: 't-air', t: '1. Атмосфера' },
+      { h: 't-water', k: 't-water', t: '2. Гидросфера' },
+      { h: 't-waste', k: 't-waste', t: '3. Отходы' },
+      { h: 't-marine', k: 't-marine', t: '4. Судно как источник' },
     ] },
-    { href: 'air', key: 'air', title: 'Качество воздуха' },
-    { href: 'transport', key: 'transport', title: 'Выбросы транспорта' },
-    { href: 'marine', key: 'marine', title: 'Судовое загрязнение' },
-    { href: 'sources', key: 'sources', title: 'Источники' },
+    { t: 'Задачи', h: 'air', drop: [
+      { h: 'air', k: 'air', t: 'Качество воздуха' },
+      { h: 'transport', k: 'transport', t: 'Выбросы транспорта' },
+      { h: 'marine', k: 'marine', t: 'Судовое загрязнение' },
+    ] },
+    { h: 'sources', k: 'sources', t: 'Источники' },
   ];
+  const navLink = (it) =>
+    `<a href="${root}${it.h}" class="${page === it.k ? 'on' : ''}">${it.t}</a>`;
+  const navHtml = nav.map((g) => {
+    if (!g.drop) return navLink(g);
+    const on = g.drop.some((it) => page === it.k) ? 'on' : '';
+    return `<span class="nav-drop"><a href="${root}${g.h}" class="${on}">${g.t} ▾</a>`
+      + `<span class="drop">${g.drop.map(navLink).join('')}</span></span>`;
+  }).join('');
 
   const header = document.createElement('header');
   header.className = 'site';
   header.innerHTML = `<div class="wrap">
     <a class="logo" href="${root}">${logoSvg}<span>Промышленная экология</span></a>
-    <nav class="top">${nav.map(({ href, key, title, sub }) => {
-      const on = page === key ||
-        (key === 'theory' && sub && sub.some(([h]) => h === page));
-      const link = `<a href="${root}${href}" class="${on ? 'on' : ''}">${title}${sub ? ' ▾' : ''}</a>`;
-      if (!sub) return link;
-      return `<div class="nav-drop">${link}<div class="drop">${sub.map(([h, t]) =>
-        `<a href="${root}${h}" class="${page === h ? 'on' : ''}">${t}</a>`).join('')}</div></div>`;
-    }).join('')}</nav>
+    <nav class="top">${navHtml}</nav>
   </div>`;
   document.body.prepend(header);
+  const onReady = (fn) => (document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', fn) : fn());
 
   const footer = document.createElement('footer');
   footer.className = 'site';
@@ -50,7 +56,7 @@
       и сбросов, живые расчёты в браузере</div>
     <div><a href="${root}sources">источники и нормативы</a></div>
   </div>`;
-  document.body.appendChild(footer);
+  onReady(() => document.body.appendChild(footer));
 
   /* маркеры стрелок для размерных линий — один раз на страницу */
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -62,5 +68,5 @@
     <marker id="arrS" markerWidth="10" markerHeight="8" refX="1" refY="4" orient="auto">
       <path d="M10,0 L0,4 L10,8 z" fill="#16161a"/></marker>
   </defs>`;
-  document.body.appendChild(defs);
+  onReady(() => document.body.appendChild(defs));
 })();
