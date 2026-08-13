@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Судовое загрязнение: сбросы, выбросы и требования МАРПОЛ 73/78</title>
+<meta name="description" content="Живой расчёт судовых сбросов и выбросов: объёмы нефтесодержащих и сточных вод, мусор, подбор сепаратора и установки обработки сточных вод, выбросы SOx, NOx и CO2 главного двигателя, проверка по приложениям МАРПОЛ, эффект низкосернистого топлива и скруббера.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="wrap">
+  <h1>Судовое загрязнение и требования МАРПОЛ</h1>
+  <p class="lead">Судно — комплексный источник: за один рейс оно сбрасывает
+  нефтесодержащие и сточные воды, накапливает мусор, выбрасывает с газами
+  главного двигателя оксиды серы и азота и переносит с балластом чужие
+  организмы. Международная конвенция по предотвращению загрязнения с судов
+  (МАРПОЛ 73/78) регулирует каждый из этих потоков отдельным приложением, а
+  инженерная задача одинакова: посчитать количество и подобрать оборудование,
+  доводящее сброс или выброс до нормы.</p>
+
+  <h2>1. Приложения МАРПОЛ: что чем нормируется</h2>
+  <table class="el">
+    <tr><th>Приложение</th><th>Предмет</th><th>Ключевое требование</th></tr>
+    <tr><td>I</td><td>Предотвращение загрязнения нефтью</td>
+      <td>Сброс из машинных помещений только через оборудование с содержанием
+      нефти в стоке не более <b>15 частей на миллион</b> (15 ppm), с
+      сигнализатором и автоматическим запорным устройством; журнал нефтяных
+      операций; в особых районах — жёстче.</td></tr>
+    <tr><td>II</td><td>Вредные жидкие вещества, перевозимые наливом</td>
+      <td>Деление на категории <b>X, Y, Z и «прочие вещества»</b> по степени
+      опасности; для категории X сброс остатков в море запрещён, для
+      остальных — нормы предварительной мойки и разбавления.</td></tr>
+    <tr><td>III</td><td>Вредные вещества в упаковке</td>
+      <td>Требования к упаковке, маркировке, документации и размещению;
+      сброс за борт запрещён.</td></tr>
+    <tr><td>IV</td><td>Сточные воды</td>
+      <td>Сброс необработанных сточных вод запрещён вблизи берега; после
+      установки обработки — на установленном расстоянии от ближайшего берега;
+      для установок нормируются БПК, взвешенные вещества и бактериальное
+      загрязнение.</td></tr>
+    <tr><td>V</td><td>Мусор</td>
+      <td>Полный запрет сброса пластмасс; для остальных категорий — расстояния
+      от берега и требование измельчения пищевых отходов; в особых районах
+      запреты строже.</td></tr>
+    <tr><td>VI</td><td>Загрязнение воздуха с судов</td>
+      <td>Пределы содержания серы в топливе (глобальный и более жёсткий в
+      районах контроля выбросов), пределы выброса оксидов азота по уровням
+      Tier I–III, требования к судовым инсинераторам, меры по
+      энергоэффективности.</td></tr>
+  </table>
+  <div class="note tip">Точные значения пределов, даты вступления в силу и
+  перечень районов контроля выбросов приведены в главе
+  <a href="t-marine">«Судно как источник загрязнения»</a> и в разделе
+  <a href="sources">«Источники»</a>. Ниже они используются как расчётные
+  величины и вынесены в поля ввода, чтобы можно было проверить любой вариант.</div>
+
+  <h2>2. Исходные данные судна</h2>
+  <form id="src" onsubmit="return false">
+  <div class="panel">
+    <h3 style="margin-top:4px">Экипаж и рейс</h3>
+    <div class="controls">
+      <label>Численность экипажа <i>n</i>, чел <input type="number" id="inCrew" value="24" step="1" min="1" style="width:80px"></label>
+      <label>Автономность <i>A</i>, сут <input type="number" id="inAuto" value="30" step="1" min="1" style="width:80px"></label>
+    </div>
+    <h3>Нефтесодержащие (льяльные) воды</h3>
+    <div class="controls">
+      <label>Суточное накопление <i>q</i><sub>лв</sub>, м³/сут <input type="number" id="inQlv" value="1.2" step="0.1" min="0" style="width:80px"></label>
+      <label>Время работы сепаратора, ч/сут <input type="number" id="inTsep" value="4" step="0.5" min="0.5" style="width:80px"></label>
+      <label>Содержание нефти на входе <i>C</i>₀, мг/л <input type="number" id="inC0" value="2000" step="100" min="16" style="width:90px"></label>
+    </div>
+    <h3>Сточные воды и мусор</h3>
+    <div class="controls">
+      <label>Норма водопотребления, л/(чел·сут) <input type="number" id="inQw" value="150" step="10" min="10" style="width:80px"></label>
+      <label>БПК₅ на человека, г/сут <input type="number" id="inBod" value="60" step="5" min="1" style="width:80px"></label>
+      <label>Взвешенные на человека, г/сут <input type="number" id="inSs" value="65" step="5" min="1" style="width:80px"></label>
+      <label>Норма накопления мусора, кг/(чел·сут) <input type="number" id="inGar" value="1.5" step="0.1" min="0" style="width:80px"></label>
+      <label>Плотность мусора, кг/м³ <input type="number" id="inRhoG" value="120" step="10" min="10" style="width:80px"></label>
+    </div>
+    <h3>Главный двигатель</h3>
+    <div class="controls">
+      <label>Мощность <i>N<sub>e</sub></i>, кВт <input type="number" id="inNe" value="6000" step="100" min="10" style="width:90px"></label>
+      <label>Нагрузка <i>x</i>, % <input type="number" id="inLoad" value="85" step="5" min="10" max="110" style="width:70px"></label>
+      <label>Удельный расход <i>b<sub>e</sub></i>, г/(кВт·ч) <input type="number" id="inBe" value="190" step="5" min="100" style="width:80px"></label>
+      <label>Часов работы в сутки <input type="number" id="inHrs" value="20" step="1" min="1" max="24" style="width:70px"></label>
+      <label>Содержание серы <i>S</i>, % m/m <input type="number" id="inS" value="2.5" step="0.1" min="0" max="5" style="width:80px"></label>
+      <label>Частота вращения <i>n</i>, об/мин <input type="number" id="inRpm" value="500" step="10" min="50" style="width:80px"></label>
+      <label>Уровень NOx
+        <select id="selTier">
+          <option value="I">Tier I</option>
+          <option value="II" selected>Tier II</option>
+          <option value="III">Tier III</option>
+        </select></label>
+      <label>Фактический выброс <i>g</i><sub>NOx</sub>, г/(кВт·ч) <input type="number" id="inGnox" value="9.8" step="0.1" min="0" style="width:80px"></label>
+      <label>Углеродный коэффициент <i>C<sub>F</sub></i> <input type="number" id="inCf" value="3.114" step="0.001" min="1" style="width:90px"></label>
+      <label>Район плавания
+        <select id="selZone">
+          <option value="global" selected>вне районов контроля выбросов</option>
+          <option value="eca">район контроля выбросов (ECA)</option>
+        </select></label>
+      <label>КПД скруббера по сере η, % <input type="number" id="inEta" value="97" step="1" min="0" max="100" style="width:70px"></label>
+    </div>
+    <div class="caption">Числовой пример: среднетоннажное судно со
+    среднеоборотным дизелем, рейс 30 суток, тяжёлое топливо с содержанием серы
+    2,5 %.</div>
+    <p><button class="btn" type="button" id="btnReset">Вернуть числовой пример</button></p>
+  </div>
+  </form>
+
+  <h2>3. Сводка за рейс</h2>
+  <div id="sum"></div>
+
+  <h2>4. Нефтесодержащие воды и сепаратор</h2>
+  <p>В машинном помещении в льяльные колодцы собирается вода с примесью
+  топлива и масла: протечки уплотнений, конденсат, промывочные воды. Объём за
+  рейс и требуемая подача сепаратора считаются прямо:</p>
+  <p style="text-align:center">$$V_{\text{лв}}=q_{\text{лв}}A,\qquad Q_{\text{сеп}}=\frac{q_{\text{лв}}}{t_{\text{раб}}},$$</p>
+  <p>где \(t_{\text{раб}}\) — принятое время работы сепаратора в сутки. Норма
+  приложения I — не более 15 ppm нефти в сбрасываемой воде, поэтому требуемая
+  степень очистки зависит от загрязнённости на входе:</p>
+  <p style="text-align:center">$$\eta_{\text{сеп}}=1-\frac{15}{C_0}.$$</p>
+  <div class="calcbox" id="calcOil"></div>
+
+  <div class="panel">
+    <svg viewBox="0 0 640 300" class="geo-board" style="max-width:640px" role="img"
+         aria-label="Схема системы очистки нефтесодержащих вод: льяльные колодцы, сборный танк, насос, сепаратор, сигнализатор 15 ppm">
+      <!-- левая колонка -->
+      <rect x="20" y="24" width="170" height="52" rx="8" fill="#fff" stroke="#16161a" stroke-width="1.4"/>
+      <text x="105" y="46" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Льяльные колодцы</text>
+      <text x="105" y="62" text-anchor="middle" style="font:12px system-ui;fill:#6b6b74">машинного помещения</text>
+
+      <rect x="20" y="104" width="170" height="58" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="105" y="124" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сборный танк</text>
+      <text x="105" y="140" text-anchor="middle" style="font:12px system-ui;fill:#16161a">льяльных вод</text>
+      <text id="svgVlv" x="105" y="156" text-anchor="middle" style="font:11.5px system-ui;fill:#155e75">— м³ за рейс</text>
+
+      <rect x="20" y="192" width="170" height="44" rx="8" fill="#fff" stroke="#16161a" stroke-width="1.4"/>
+      <text x="105" y="219" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Насос</text>
+
+      <!-- середина -->
+      <rect x="235" y="192" width="170" height="44" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="320" y="211" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сепаратор 15 ppm</text>
+      <text id="svgQsep" x="320" y="227" text-anchor="middle" style="font:11.5px system-ui;fill:#155e75">— м³/ч</text>
+
+      <rect x="235" y="104" width="170" height="52" rx="8" fill="#fff" stroke="#b3382e" stroke-width="1.4"/>
+      <text x="320" y="126" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Танк нефтеостатков</text>
+      <text x="320" y="142" text-anchor="middle" style="font:12px system-ui;fill:#6b6b74">(шлама)</text>
+
+      <rect x="235" y="24" width="170" height="52" rx="8" fill="#fff" stroke="#6b6b74" stroke-width="1.4"/>
+      <text x="320" y="46" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сдача на берег</text>
+      <text x="320" y="62" text-anchor="middle" style="font:12px system-ui;fill:#6b6b74">или инсинератор</text>
+
+      <!-- правая колонка -->
+      <rect x="450" y="192" width="170" height="44" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="535" y="211" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сигнализатор 15 ppm</text>
+      <text x="535" y="227" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">и трёхходовой клапан</text>
+
+      <rect x="450" y="256" width="170" height="36" rx="8" fill="#fff" stroke="#1a7f37" stroke-width="1.6"/>
+      <text x="535" y="279" text-anchor="middle" style="font:12px system-ui;fill:#1a7f37">За борт: ≤ 15 ppm</text>
+
+      <!-- связи -->
+      <line x1="105" y1="76" x2="105" y2="104" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="105" y1="162" x2="105" y2="192" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="190" y1="214" x2="235" y2="214" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="405" y1="214" x2="450" y2="214" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="535" y1="236" x2="535" y2="256" stroke="#1a7f37" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="320" y1="192" x2="320" y2="156" stroke="#b3382e" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="320" y1="104" x2="320" y2="76" stroke="#6b6b74" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <path d="M470 236 L470 250 L205 250 L205 172 L120 172" fill="none" stroke="#b3382e" stroke-width="1.3"
+            stroke-dasharray="6 4" marker-end="url(#arrE)"/>
+      <text x="300" y="245" text-anchor="middle" style="font:11.5px system-ui;fill:#b3382e;paint-order:stroke;stroke:#ffffff;stroke-width:3px">возврат в танк при &gt; 15 ppm</text>
+    </svg>
+    <div class="caption">Сигнализатор непрерывно измеряет содержание нефти в
+    сбрасываемом потоке; при превышении 15 ppm трёхходовой клапан автоматически
+    возвращает воду в сборный танк — сброс физически невозможен, пока очистка
+    не вышла на норму. Отделённые нефтеостатки накапливаются в танке шлама и
+    сдаются на приёмное сооружение или сжигаются в инсинераторе.</div>
+  </div>
+
+  <h2>5. Сточные воды и установка обработки</h2>
+  <p>Объём сточных вод определяется нормой водопотребления, а нагрузка на
+  установку — массой загрязнений, поступающей от одного человека в сутки:</p>
+  <p style="text-align:center">$$Q_{\text{ст}}=\frac{n\,q_\text{в}}{1000},\qquad
+  C_{\text{вход}}=\frac{n\,g}{Q_{\text{ст}}},\qquad \eta=1-\frac{C_{\text{норм}}}{C_{\text{вход}}} .$$</p>
+  <p>Нормативы очищенного стока для судовых установок задают предельные
+  значения БПК₅ и взвешенных веществ (в расчёте приняты 25 и 35 мг/л
+  соответственно), а также показатель бактериального загрязнения; отдельно
+  ужесточённые требования действуют для пассажирских судов в особых районах,
+  где дополнительно нормируются азот и фосфор.</p>
+  <div class="calcbox" id="calcSew"></div>
+
+  <div class="panel">
+    <svg viewBox="0 0 640 270" class="geo-board" style="max-width:640px" role="img"
+         aria-label="Схема системы сточных вод: сборный танк, установка обработки, обеззараживание, сброс или сдача на берег">
+      <rect x="20" y="20" width="180" height="48" rx="8" fill="#fff" stroke="#16161a" stroke-width="1.4"/>
+      <text x="110" y="40" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Санитарные приборы</text>
+      <text x="110" y="57" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">чёрные и серые стоки</text>
+
+      <rect x="20" y="100" width="180" height="58" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="110" y="120" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сборный танк</text>
+      <text x="110" y="136" text-anchor="middle" style="font:12px system-ui;fill:#16161a">сточных вод</text>
+      <text id="svgVst" x="110" y="152" text-anchor="middle" style="font:11.5px system-ui;fill:#155e75">— м³ за рейс</text>
+
+      <rect x="240" y="100" width="180" height="58" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="330" y="120" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Установка обработки</text>
+      <text x="330" y="136" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">биореактор, аэрация</text>
+      <text id="svgQstp" x="330" y="152" text-anchor="middle" style="font:11.5px system-ui;fill:#155e75">— м³/сут</text>
+
+      <rect x="460" y="100" width="160" height="58" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.6"/>
+      <text x="540" y="124" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Обеззараживание</text>
+      <text x="540" y="141" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">и отстаивание</text>
+
+      <rect x="440" y="196" width="180" height="52" rx="8" fill="#fff" stroke="#1a7f37" stroke-width="1.6"/>
+      <text x="530" y="218" text-anchor="middle" style="font:12px system-ui;fill:#1a7f37">Сброс за борт</text>
+      <text x="530" y="235" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">БПК₅ ≤ 25, взвеш. ≤ 35 мг/л</text>
+
+      <rect x="20" y="196" width="180" height="52" rx="8" fill="#fff" stroke="#6b6b74" stroke-width="1.4"/>
+      <text x="110" y="218" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Сдача на приёмное</text>
+      <text x="110" y="235" text-anchor="middle" style="font:12px system-ui;fill:#16161a">сооружение порта</text>
+
+      <line x1="110" y1="68" x2="110" y2="100" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="200" y1="129" x2="240" y2="129" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="420" y1="129" x2="460" y2="129" stroke="#16161a" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="540" y1="158" x2="540" y2="196" stroke="#1a7f37" stroke-width="1.4" marker-end="url(#arrE)"/>
+      <line x1="110" y1="158" x2="110" y2="196" stroke="#6b6b74" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arrE)"/>
+    </svg>
+    <div class="caption">Пока судно в порту или в зоне запрета сброса, стоки
+    накапливаются в сборном танке и сдаются на берег; в разрешённом районе они
+    проходят обработку и обеззараживание. Вместимость танка и производительность
+    установки — два независимых параметра: первый определяется длительностью
+    запрета, второй — суточным расходом.</div>
+  </div>
+
+  <h2>6. Мусор</h2>
+  <p>Масса и объём мусора считаются по норме накопления на человека; объём
+  нужен для вместимости кладовых, масса — для подбора инсинератора.</p>
+  <div class="calcbox" id="calcGar"></div>
+  <div class="note">Пластмассы приложением V запрещены к сбросу в любом
+  районе Мирового океана, поэтому селекция мусора на борту — не пожелание, а
+  условие выполнения конвенции: смешанный мусор целиком приобретает статус
+  запрещённого к сбросу.</div>
+
+  <h2>7. Выбросы главного двигателя</h2>
+  <p>Расход топлива определяется мощностью и удельным расходом, а масса
+  выбросов — стехиометрией и удельными характеристиками двигателя:</p>
+  <p style="text-align:center">$$B=\frac{N_e\,x\,b_e}{10^{6}}\,t,\qquad
+  m_{SO_2}=2\,B\,\frac{S}{100},\qquad m_{CO_2}=B\,C_F,\qquad
+  m_{NO_x}=\frac{g_{NO_x}\,N_e\,x\,t}{10^{6}} .$$</p>
+  <p>Коэффициент 2 в формуле для диоксида серы — отношение молярных масс
+  \(M(SO_2)/M(S)=64/32\): вся сера топлива при сгорании переходит в SO₂.
+  Углеродный коэффициент \(C_F\) — масса CO₂ на тонну топлива; он зависит от
+  сорта топлива и для тяжёлых сортов близок к 3,1.</p>
+  <div class="calcbox" id="calcEng"></div>
+
+  <h3>Проверка соответствия требованиям</h3>
+  <p>Предел выброса оксидов азота зависит от номинальной частоты вращения
+  двигателя <i>n</i> и уровня Tier, установленного по дате постройки судна и
+  району плавания; предел содержания серы — от района.</p>
+  <div class="calcbox" id="calcMarpol"></div>
+
+  <div class="panel">
+    <svg id="svgS" viewBox="0 0 640 160" class="geo-board" style="max-width:640px" role="img"
+         aria-label="Диаграмма выброса диоксида серы за рейс при разных вариантах топлива и при работе скруббера"></svg>
+    <div class="caption">Переход с тяжёлого топлива на низкосернистое и работа
+    скруббера дают сопоставимый результат по SO₂ — выбор между ними
+    экономический: цена топлива против стоимости установки и эксплуатации
+    системы очистки.</div>
+  </div>
+
+  <h2>8. Скруббер: как работает и что контролируется</h2>
+  <p>Система очистки выхлопных газов промывает газ щелочной средой: в
+  открытом контуре используется забортная вода, естественная щёлочность
+  которой связывает оксиды серы, в замкнутом — пресная вода с добавлением
+  щёлочи и последующей очисткой промывочной воды. Установка эквивалентна
+  применению малосернистого топлива, если обеспечивает такое же соотношение
+  выбросов; при этом нормируется и сама промывочная вода — по водородному
+  показателю, содержанию полициклических ароматических углеводородов,
+  мутности и нитратам.</p>
+
+  <div class="panel">
+    <svg viewBox="0 0 640 290" class="geo-board" style="max-width:640px" role="img"
+         aria-label="Схема скруббера: главный двигатель, промывочная башня с форсунками, контроль промывочной воды">
+      <!-- двигатель -->
+      <rect x="20" y="170" width="140" height="60" rx="8" fill="#fff" stroke="#16161a" stroke-width="1.6"/>
+      <text x="90" y="196" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Главный</text>
+      <text x="90" y="213" text-anchor="middle" style="font:12px system-ui;fill:#16161a">двигатель</text>
+      <!-- забортная вода -->
+      <rect x="20" y="60" width="150" height="48" rx="8" fill="#fff" stroke="#155e75" stroke-width="1.4"/>
+      <text x="95" y="80" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Забортная вода</text>
+      <text x="95" y="97" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">насос, щёлочность</text>
+      <!-- башня -->
+      <rect x="240" y="46" width="110" height="200" rx="14" fill="rgba(21,94,117,.07)" stroke="#155e75" stroke-width="1.8"/>
+      <text x="295" y="70" text-anchor="middle" style="font:12px system-ui;fill:#155e75">скруббер</text>
+      <g fill="#155e75" opacity="0.75">
+        <circle cx="265" cy="110" r="3"/><circle cx="295" cy="110" r="3"/><circle cx="325" cy="110" r="3"/>
+        <circle cx="272" cy="140" r="3"/><circle cx="302" cy="140" r="3"/><circle cx="332" cy="140" r="3"/>
+        <circle cx="265" cy="170" r="3"/><circle cx="295" cy="170" r="3"/><circle cx="325" cy="170" r="3"/>
+        <circle cx="272" cy="200" r="3"/><circle cx="302" cy="200" r="3"/><circle cx="332" cy="200" r="3"/>
+      </g>
+      <line x1="255" y1="230" x2="255" y2="96" stroke="#6b6b74" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrE)"/>
+      <!-- потоки -->
+      <line x1="160" y1="200" x2="240" y2="200" stroke="#16161a" stroke-width="1.6" marker-end="url(#arrE)"/>
+      <text x="200" y="192" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">газы</text>
+      <line x1="170" y1="84" x2="240" y2="84" stroke="#155e75" stroke-width="1.6" marker-end="url(#arrE)"/>
+      <line x1="295" y1="46" x2="295" y2="20" stroke="#1a7f37" stroke-width="1.8" marker-end="url(#arrE)"/>
+      <text x="310" y="26" style="font:12px system-ui;fill:#1a7f37">очищенные газы</text>
+      <text id="svgSO2" x="310" y="44" style="font:11.5px system-ui;fill:#6b6b74">SO₂ после очистки — т/рейс</text>
+      <text id="svgSeq" x="20" y="262" style="font:11.5px system-ui;fill:#6b6b74">эквивалент по сере — %</text>
+      <!-- промывочная вода -->
+      <line x1="350" y1="222" x2="380" y2="222" stroke="#155e75" stroke-width="1.6" marker-end="url(#arrE)"/>
+      <rect x="380" y="188" width="250" height="62" rx="8" fill="#fff" stroke="#b3382e" stroke-width="1.4"/>
+      <text x="505" y="208" text-anchor="middle" style="font:12px system-ui;fill:#16161a">Контроль промывочной воды</text>
+      <text x="505" y="225" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">pH, ПАУ, мутность, нитраты</text>
+      <text x="505" y="242" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">сброс при соблюдении норм</text>
+      <line x1="505" y1="188" x2="505" y2="152" stroke="#6b6b74" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrE)"/>
+      <text x="505" y="144" text-anchor="middle" style="font:11.5px system-ui;fill:#6b6b74">в замкнутом контуре — возврат</text>
+    </svg>
+    <div class="caption">В открытом контуре промывочная вода после контроля
+    сбрасывается за борт, в замкнутом — очищается и циркулирует, а осадок
+    сдаётся на берег. Замкнутый контур обязателен там, где сброс промывочной
+    воды ограничен портовыми правилами.</div>
+  </div>
+
+  <h2>9. Выводы, которые даёт расчёт</h2>
+  <ol>
+    <li><b>Оборудование подбирается не «по объёму», а по расходу.</b>
+    Вместимость танка определяется длительностью запрета сброса, а
+    производительность сепаратора или установки обработки — суточным
+    поступлением и принятым временем работы. Ошибка в этих двух величинах
+    даёт либо неработающую систему, либо лишний вес и объём.</li>
+    <li><b>Требуемая степень очистки почти не зависит от нормы.</b>
+    При содержании нефти на входе в сотни раз выше 15 ppm требуемая
+    эффективность превышает 99 %: именно поэтому судовой сепаратор — это
+    ступень гравитационного разделения плюс коалесцирующий фильтр, а не
+    один отстойник.</li>
+    <li><b>Сера — единственный выброс, который регулируется топливом.</b>
+    Оксиды азота образуются из азота воздуха и зависят от организации
+    рабочего процесса, поэтому Tier III достигается рециркуляцией газов или
+    селективным каталитическим восстановлением; а массу SO₂ можно уменьшить
+    прямо на порядок, просто сменив сорт топлива.</li>
+    <li><b>CO₂ не нормируется концентрацией.</b> Он ограничивается косвенно —
+    через требования к энергоэффективности судна, то есть через расход
+    топлива на тонно-милю. Уменьшить выброс углекислого газа очисткой газов
+    нельзя, только снижением расхода.</li>
+  </ol>
+
+  <div class="srcbox">
+    <h2>Источники раздела</h2>
+    <ul>
+      <li>Международная конвенция по предотвращению загрязнения с судов
+      1973 года, изменённая Протоколом 1978 года к ней (МАРПОЛ 73/78),
+      приложения I–VI.</li>
+      <li>Резолюции Комитета по защите морской среды ИМО по нормативам
+      установок обработки сточных вод и по системам очистки выхлопных газов.</li>
+      <li>Международная конвенция о контроле судовых балластных вод и осадков
+      и управлении ими (BWM, 2004).</li>
+      <li>Полный перечень с реквизитами — <a href="sources">«Источники»</a>,
+      теория — глава <a href="t-marine">«Судно как источник загрязнения»</a>.</li>
+    </ul>
+  </div>
+</main>
+<script src="assets/site.js" data-root="./" data-page="marine"></script>
+<script src="assets/calc.js"></script>
+<script src="assets/marine.js"></script>
+</body>
+</html>
