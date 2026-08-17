@@ -3,8 +3,6 @@
  * Таблица веществ редактируется: строки добавляются и удаляются. */
 'use strict';
 (function () {
-  const { fmt, fmtA, fmtE, row, esc, num, drawBars } = window.EC;
-  const $ = id => document.getElementById(id);
 
   /* ---------- справочник ПДК (СанПиН 1.2.3685-21, атмосферный воздух
    * городских и сельских поселений). Прочерк — норматив не установлен. ---------- */
@@ -256,6 +254,5 @@
     document.addEventListener('input', render);
     render();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  onReady(init);
 })();

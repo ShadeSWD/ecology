@@ -3,8 +3,6 @@
  * двигателя и проверка соответствия требованиям МАРПОЛ 73/78. */
 'use strict';
 (function () {
-  const { fmt, fmtA, fmtE, row, esc, num, drawBars } = window.EC;
-  const $ = id => document.getElementById(id);
 
   /* типоразмерный ряд производительности оборудования */
   const SEP_ROW = [0.25, 0.5, 1.0, 2.5, 5.0, 10.0];        // м³/ч, сепараторы
@@ -191,7 +189,6 @@
     })), { title: 'Выброс SO₂ за рейс при разном содержании серы в топливе', unit: 'т', padR: 150 });
 
     /* живые подписи на схемах */
-    const setT = (id, v) => { const e = $(id); if (e) e.textContent = v; };
     setT('svgVlv', `${fmtA(r.Vlv)} м³ за рейс`);
     setT('svgQsep', `${fmt(r.QsepStd, 2)} м³/ч`);
     setT('svgVst', `${fmtA(r.Vst)} м³ за рейс`);
@@ -214,6 +211,5 @@
     });
     render();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  onReady(init);
 })();

@@ -1,6 +1,6 @@
 /* Общий каркас страниц сайта «Промышленная экология»: шапка, навигация,
  * подвал, общие SVG-маркеры. Пути относительные — сайт работает под любым
- * префиксом (например /ecology/). */
+ * префиксом (например /ecology/). Требует common.js (onReady). */
 'use strict';
 (function () {
   const me = document.currentScript;
@@ -46,9 +46,6 @@
     <nav class="top">${navHtml}</nav>
   </div>`;
   document.body.prepend(header);
-  const onReady = (fn) => (document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', fn) : fn());
-
   const footer = document.createElement('footer');
   footer.className = 'site';
   footer.innerHTML = `<div class="wrap">

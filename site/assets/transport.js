@@ -3,8 +3,6 @@
  * Все исходные данные редактируются, расчёт пересчитывается целиком. */
 'use strict';
 (function () {
-  const { fmt, fmtA, fmtE, row, esc, num, drawBars, colors } = window.EC;
-  const $ = id => document.getElementById(id);
 
   /* ---------- вещества: ПДК по СанПиН 1.2.3685-21, r_V — по методике ---------- */
   const SUB = [
@@ -194,7 +192,6 @@
     })), { title: 'Масса выброса по веществам, т/год', unit: 'т/год' });
 
     /* живые подписи на схеме участка */
-    const setT = (id, v) => { const e = $(id); if (e) e.textContent = v; };
     setT('svgL', `L = ${fmt(p.L, 2)} км`);
     setT('svgH', `H = ${fmt(p.H, 0)} м`);
     setT('svgU', `u = ${fmt(p.u, 1)} м/с`);
@@ -225,6 +222,5 @@
     });
     render();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  onReady(init);
 })();
